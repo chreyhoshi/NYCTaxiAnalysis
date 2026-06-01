@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NYC Taxi Analysis</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #0a0a14;
+  color: #e0e0e0;
+  min-height: 100vh;
+  background-image: radial-gradient(ellipse at 20% 0%, #0f2030 0%, transparent 60%),
+                    radial-gradient(ellipse at 80% 100%, #1a0a20 0%, transparent 60%);
+}
+.header {
+  background: linear-gradient(135deg, #1a1a30 0%, #12121e 100%);
+  border-bottom: 1px solid #2a2a45;
+  padding: 28px 32px 20px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, #ffd70008 0%, transparent 70%);
+  border-radius: 50%;
+}
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  left: 20%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, #4fc3f708 0%, transparent 70%);
+  border-radius: 50%;
+}
+.header-content { max-width: 1400px; margin: 0 auto; position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; }
+.header-left { }
+.header h1 { font-size: 22px; font-weight: 700; background: linear-gradient(135deg, #ffd700, #ffb300); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: -0.3px; }
+.header .badge { display: inline-block; font-size: 10px; font-weight: 600; background: #2a2a45; color: #999; padding: 2px 10px; border-radius: 20px; margin-left: 8px; -webkit-text-fill-color: #999; vertical-align: middle; }
+.header .subtitle { color: #666; font-size: 13px; margin-top: 4px; }
+
+.stats-row { display: flex; gap: 20px; flex-wrap: wrap; }
+.stat-pill { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #777; }
+.stat-pill .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+.stat-pill strong { color: #ccc; font-weight: 600; }
+
+.container { max-width: 1400px; margin: 0 auto; padding: 0 24px 40px; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 20px; }
+.card {
+  background: linear-gradient(145deg, #151528, #12121e);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #252540;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+.card .icon { font-size: 20px; margin-bottom: 10px; opacity: 0.6; }
+.card .label { font-size: 11px; text-transform: uppercase; color: #666; letter-spacing: 0.8px; font-weight: 500; }
+.card .value { font-size: 30px; font-weight: 700; margin-top: 4px; letter-spacing: -0.5px; }
+.card .sub { font-size: 12px; color: #555; margin-top: 4px; }
+.card .trend { font-size: 12px; margin-top: 6px; font-weight: 500; }
+.card .trend.up { color: #66bb6a; }
+.card .trend.down { color: #ef5350; }
+.card.accent-blue .value { color: #4fc3f7; }
+.card.accent-yellow .value { color: #ffd700; }
+.card.accent-green .value { color: #66bb6a; }
+.card.accent-red .value { color: #ef5350; }
+.card.accent-purple .value { color: #ce93d8; }
+.card.accent-orange .value { color: #ffa726; }
+.card.accent-cyan .value { color: #26c6da; }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.panel {
+  background: linear-gradient(145deg, #151528, #12121e);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #252540;
+  transition: border-color 0.2s;
+}
+.panel:hover { border-color: #353560; }
+.panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.panel h2 { font-size: 13px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.5px; }
+.panel .chip { font-size: 10px; color: #666; background: #1a1a30; padding: 2px 8px; border-radius: 10px; border: 1px solid #2a2a40; }
+.panel canvas { max-height: 270px; width: 100%; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th { text-align: left; padding: 8px 10px; color: #666; font-weight: 500; border-bottom: 1px solid #252540; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+tbody td { padding: 10px; border-bottom: 1px solid #1a1a2e; vertical-align: middle; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: #1a1a2e; }
+td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.vendor-indicator { display: inline-flex; align-items: center; gap: 6px; }
+.vendor-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.vendor-dot.v1 { background: #4fc3f7; }
+.vendor-dot.v2 { background: #ffd700; }
+
+.bar-cell { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.bar-chart { display: inline-block; height: 20px; border-radius: 4px; transition: width 0.6s ease; min-width: 4px; }
+.bar-chart.v1 { background: linear-gradient(90deg, #4fc3f7, #29b6f6); }
+.bar-chart.v2 { background: linear-gradient(90deg, #ffd700, #ffb300); }
+
+.quality-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.quality-item { text-align: center; padding: 16px 10px; background: #12121e; border-radius: 10px; border: 1px solid #252540; }
+.quality-item .num { font-size: 24px; font-weight: 700; }
+.quality-item .lbl { font-size: 11px; color: #666; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.3px; }
+.quality-item.issue .num { color: #ef5350; }
+
+.loading { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 400px; color: #555; gap: 16px; }
+.spinner { width: 32px; height: 32px; border: 3px solid #252540; border-top-color: #ffd700; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.error { display: none; background: #1a0a0a; border: 1px solid #3a1515; color: #ef5350; padding: 16px 20px; border-radius: 10px; margin-bottom: 16px; font-size: 14px; }
+
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } .quality-grid { grid-template-columns: 1fr; } .container { padding: 0 16px 40px; } .header { padding: 20px 16px; } }
+@media (max-width: 600px) { .cards { grid-template-columns: 1fr 1fr; } .header-content { flex-direction: column; align-items: flex-start; } }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-content">
+    <div class="header-left">
+      <h1>NYC Yellow Taxi <span class="badge">Bronze &rarr; Silver</span></h1>
+      <div class="subtitle" id="subtitle">Loading data...</div>
+    </div>
+    <div class="stats-row" id="statsRow"></div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="error" id="errorBox"></div>
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <span>Loading dashboard data...</span>
+  </div>
+
+  <div id="content" style="display:none">
+    <div class="cards" id="summaryCards"></div>
+
+    <div class="grid">
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Trips by Hour</h2>
+          <span class="chip">24-hour distribution</span>
+        </div>
+        <canvas id="chartHourly"></canvas>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Vendor Comparison</h2>
+          <span class="chip">Vendor 1 vs Vendor 2</span>
+        </div>
+        <canvas id="chartVendors"></canvas>
+      </div>
+    </div>
+
+    <div class="grid" style="grid-template-columns: 1fr">
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Daily Trip &amp; Revenue Trend</h2>
+          <span class="chip" id="dailyRange"></span>
+        </div>
+        <canvas id="chartDaily"></canvas>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Data Quality Issues</h2>
+          <span class="chip">invalid rows in bronze</span>
+        </div>
+        <div class="quality-grid" id="qualityGrid"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <h2>Vendor Details</h2>
+          <span class="chip">silver layer</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Vendor</th>
+                <th>Trips</th>
+                <th>Avg Fare</th>
+                <th>Avg Tip</th>
+                <th>Avg Total</th>
+                <th>Total Tips</th>
+              </tr>
+            </thead>
+            <tbody id="vendorTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+async function loadData() {
+  try {
+    const resp = await fetch('data.json');
+    if (!resp.ok) throw new Error(`HTTP ${resp.status} — run generate_data.py first`);
+    const d = await resp.json();
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('content').style.display = 'block';
+
+    const b = d.bronze, s = d.silver;
+    const pctKept = (s.total_trips / b.total_trips * 100).toFixed(1);
+    const pctFiltered = (d.filtered_out / b.total_trips * 100).toFixed(1);
+
+    document.getElementById('subtitle').textContent =
+      `${new Date(b.min_date).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'})} — ${new Date(b.max_date).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'})}`;
+
+    document.getElementById('statsRow').innerHTML = `
+      <span class="stat-pill"><span class="dot" style="background:#4fc3f7"></span> Raw: <strong>${b.total_trips.toLocaleString()}</strong></span>
+      <span class="stat-pill"><span class="dot" style="background:#66bb6a"></span> Cleaned: <strong>${s.total_trips.toLocaleString()}</strong></span>
+      <span class="stat-pill"><span class="dot" style="background:#ef5350"></span> Filtered: <strong>${d.filtered_out.toLocaleString()}</strong></span>
+    `;
+
+    document.getElementById('summaryCards').innerHTML = `
+      <div class="card accent-blue">
+        <div class="icon">&#128202;</div>
+        <div class="label">Bronze (Raw)</div>
+        <div class="value">${b.total_trips.toLocaleString()}</div>
+        <div class="sub">total trips ingested</div>
+        <div class="trend up">100% &bull; source of truth</div>
+      </div>
+      <div class="card accent-green">
+        <div class="icon">&#128171;</div>
+        <div class="label">Silver (Cleaned)</div>
+        <div class="value">${s.total_trips.toLocaleString()}</div>
+        <div class="sub">passengers &gt; 0, distance &gt; 0, fare &gt; 0</div>
+        <div class="trend up">${pctKept}% of raw data kept</div>
+      </div>
+      <div class="card accent-red">
+        <div class="icon">&#9888;</div>
+        <div class="label">Filtered Out</div>
+        <div class="value">${d.filtered_out.toLocaleString()}</div>
+        <div class="sub">invalid or anomalous records</div>
+        <div class="trend down">${pctFiltered}% removed</div>
+      </div>
+      <div class="card accent-yellow">
+        <div class="icon">&#128663;</div>
+        <div class="label">Vendors</div>
+        <div class="value">${d.vendors.length}</div>
+        <div class="sub">active taxi companies</div>
+        <div class="trend">Vendor ${d.vendors.map(v => v.vendor_id).join(' & ')}</div>
+      </div>
+      <div class="card accent-purple">
+        <div class="icon">&#128176;</div>
+        <div class="label">Total Revenue (Silver)</div>
+        <div class="value">$${d.daily.reduce((a,r) => a + r.total_revenue, 0).toLocaleString(undefined, {minimumFractionDigits:0, maximumFractionDigits:0})}</div>
+        <div class="sub">from ${d.daily.length} days of data</div>
+        <div class="trend">$${(d.daily.reduce((a,r) => a + r.total_revenue, 0) / d.daily.length).toLocaleString(undefined, {minimumFractionDigits:0, maximumFractionDigits:0})}/day avg</div>
+      </div>
+      <div class="card accent-orange">
+        <div class="icon">&#128200;</div>
+        <div class="label">Avg per Trip</div>
+        <div class="value">$${(d.daily.reduce((a,r) => a + r.total_revenue, 0) / s.total_trips).toFixed(2)}</div>
+        <div class="sub">average fare + tip per trip</div>
+        <div class="trend">${d.daily.length} days tracked</div>
+      </div>
+    `;
+
+    const hourlyCtx = document.getElementById('chartHourly').getContext('2d');
+    new Chart(hourlyCtx, {
+      type: 'bar',
+      data: {
+        labels: d.hourly.map(h => `${String(h[0]).padStart(2,'0')}:00`),
+        datasets: [{
+          label: 'Trips',
+          data: d.hourly.map(h => h[1]),
+          backgroundColor: d.hourly.map((_,i) => {
+            const intensity = 0.3 + (i / d.hourly.length) * 0.5;
+            return `rgba(79, 195, 247, ${intensity})`;
+          }),
+          borderColor: d.hourly.map((_,i) => {
+            const intensity = 0.6 + (i / d.hourly.length) * 0.4;
+            return `rgba(79, 195, 247, ${intensity})`;
+          }),
+          borderWidth: 1,
+          borderRadius: 4,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#555', maxRotation: 0, font: { size: 10 } }, grid: { display: false } },
+          y: { ticks: { color: '#555', font: { size: 10 } }, grid: { color: '#1a1a2e' }, beginAtZero: true }
+        }
+      }
+    });
+
+    const vendorCtx = document.getElementById('chartVendors').getContext('2d');
+    new Chart(vendorCtx, {
+      type: 'bar',
+      data: {
+        labels: d.vendors.map(v => `Vendor ${v.vendor_id}`),
+        datasets: [
+          { label: 'Avg Fare ($)', data: d.vendors.map(v => v.avg_fare), backgroundColor: '#4fc3f7', borderRadius: 4, barPercentage: 0.5 },
+          { label: 'Avg Tip ($)', data: d.vendors.map(v => v.avg_tip), backgroundColor: '#ffd700', borderRadius: 4, barPercentage: 0.5 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: true,
+        plugins: { legend: { labels: { color: '#777', boxWidth: 12, font: { size: 11 } }, align: 'end' } },
+        scales: {
+          x: { ticks: { color: '#555', font: { size: 11 } }, grid: { display: false } },
+          y: { ticks: { color: '#555', font: { size: 10 } }, grid: { color: '#1a1a2e' }, beginAtZero: true }
+        }
+      }
+    });
+
+    const dailyCtx = document.getElementById('chartDaily').getContext('2d');
+    document.getElementById('dailyRange').textContent = `${d.daily.length} days`;
+
+    const maxRev = Math.max(...d.daily.map(r => r.total_revenue));
+    new Chart(dailyCtx, {
+      type: 'line',
+      data: {
+        labels: d.daily.map(r => {
+          const dt = new Date(r.date);
+          return dt.toLocaleDateString('en-US', {month:'short', day:'numeric'});
+        }),
+        datasets: [
+          {
+            label: 'Trips',
+            data: d.daily.map(r => r.total_trips),
+            borderColor: '#4fc3f7',
+            backgroundColor: (ctx) => {
+              const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 300);
+              g.addColorStop(0, '#4fc3f740');
+              g.addColorStop(1, '#4fc3f700');
+              return g;
+            },
+            fill: true,
+            tension: 0.4,
+            pointRadius: 3,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#4fc3f7',
+            yAxisID: 'y'
+          },
+          {
+            label: 'Revenue ($)',
+            data: d.daily.map(r => r.total_revenue),
+            borderColor: '#ffd700',
+            backgroundColor: (ctx) => {
+              const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 300);
+              g.addColorStop(0, '#ffd70040');
+              g.addColorStop(1, '#ffd70000');
+              return g;
+            },
+            fill: true,
+            tension: 0.4,
+            pointRadius: 3,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#ffd700',
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: true,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { labels: { color: '#777', boxWidth: 12, font: { size: 11 } }, align: 'end' }
+        },
+        scales: {
+          x: { ticks: { color: '#555', font: { size: 10 } }, grid: { display: false } },
+          y: {
+            type: 'linear', display: true, position: 'left',
+            ticks: { color: '#4fc3f780', font: { size: 10 }, callback: v => v.toLocaleString() },
+            grid: { color: '#1a1a2e' },
+            title: { display: true, text: 'Trips', color: '#4fc3f780', font: { size: 10 } }
+          },
+          y1: {
+            type: 'linear', display: true, position: 'right',
+            ticks: { color: '#ffd70080', font: { size: 10 }, callback: v => '$' + v.toLocaleString() },
+            grid: { display: false },
+            title: { display: true, text: 'Revenue', color: '#ffd70080', font: { size: 10 } }
+          }
+        }
+      }
+    });
+
+    const maxQ = Math.max(d.quality.zero_passengers, d.quality.zero_distance, d.quality.zero_fare);
+    document.getElementById('qualityGrid').innerHTML = `
+      <div class="quality-item issue">
+        <div class="num">${d.quality.zero_passengers.toLocaleString()}</div>
+        <div class="lbl">Zero Passengers</div>
+        <div style="margin-top:6px; height:4px; background:#1a1a2e; border-radius:4px; overflow:hidden">
+          <div style="height:100%; width:${(d.quality.zero_passengers/maxQ)*100}%; background:#ef5350; border-radius:4px"></div>
+        </div>
+      </div>
+      <div class="quality-item issue">
+        <div class="num">${d.quality.zero_distance.toLocaleString()}</div>
+        <div class="lbl">Zero Distance</div>
+        <div style="margin-top:6px; height:4px; background:#1a1a2e; border-radius:4px; overflow:hidden">
+          <div style="height:100%; width:${(d.quality.zero_distance/maxQ)*100}%; background:#ffa726; border-radius:4px"></div>
+        </div>
+      </div>
+      <div class="quality-item issue">
+        <div class="num">${d.quality.zero_fare.toLocaleString()}</div>
+        <div class="lbl">Zero Fare</div>
+        <div style="margin-top:6px; height:4px; background:#1a1a2e; border-radius:4px; overflow:hidden">
+          <div style="height:100%; width:${(d.quality.zero_fare/maxQ)*100}%; background:#ce93d8; border-radius:4px"></div>
+        </div>
+      </div>
+    `;
+
+    const maxTrips = Math.max(...d.vendors.map(v => v.total_trips));
+    document.getElementById('vendorTable').innerHTML = d.vendors.map(v => `
+      <tr>
+        <td>
+          <span class="vendor-indicator">
+            <span class="vendor-dot v${v.vendor_id}"></span>
+            Vendor ${v.vendor_id}
+          </span>
+        </td>
+        <td class="num">
+          <div class="bar-cell">
+            <span class="bar-chart v${v.vendor_id}" style="width:${Math.max((v.total_trips/maxTrips)*200, 20)}px"></span>
+            ${v.total_trips.toLocaleString()}
+          </div>
+        </td>
+        <td class="num">$${v.avg_fare.toFixed(2)}</td>
+        <td class="num">$${v.avg_tip.toFixed(2)}</td>
+        <td class="num">$${v.avg_total.toFixed(2)}</td>
+        <td class="num">$${v.total_tips.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+      </tr>
+    `).join('');
+
+  } catch (e) {
+    document.getElementById('loading').style.display = 'none';
+    const box = document.getElementById('errorBox');
+    box.style.display = 'block';
+    box.textContent = e.message;
+  }
+}
+loadData();
+</script>
+</body>
+</html>

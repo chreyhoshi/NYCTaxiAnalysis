@@ -1,0 +1,345 @@
+{
+  "bronze": {
+    "total_trips": 3066765,
+    "min_date": "2008-12-31 23:01:42",
+    "max_date": "2023-02-01 00:56:53"
+  },
+  "silver": {
+    "total_trips": 2884227
+  },
+  "filtered_out": 182538,
+  "quality": {
+    "zero_passengers": 122907,
+    "zero_distance": 45862,
+    "zero_fare": 1110,
+    "total_rows": 3066765
+  },
+  "vendors": [
+    {
+      "vendor_id": 1,
+      "total_trips": 739513,
+      "avg_fare": 17.46,
+      "avg_tip": 3.15,
+      "avg_total": 25.9,
+      "total_tips": 2331633.96
+    },
+    {
+      "vendor_id": 2,
+      "total_trips": 2144714,
+      "avg_fare": 18.92,
+      "avg_tip": 3.49,
+      "avg_total": 27.86,
+      "total_tips": 7475681.69
+    }
+  ],
+  "hourly": [
+    [
+      0,
+      79567
+    ],
+    [
+      1,
+      55565
+    ],
+    [
+      2,
+      38731
+    ],
+    [
+      3,
+      25053
+    ],
+    [
+      4,
+      15836
+    ],
+    [
+      5,
+      16142
+    ],
+    [
+      6,
+      39945
+    ],
+    [
+      7,
+      79552
+    ],
+    [
+      8,
+      107901
+    ],
+    [
+      9,
+      122644
+    ],
+    [
+      10,
+      135285
+    ],
+    [
+      11,
+      145262
+    ],
+    [
+      12,
+      160233
+    ],
+    [
+      13,
+      168768
+    ],
+    [
+      14,
+      181035
+    ],
+    [
+      15,
+      185459
+    ],
+    [
+      16,
+      184673
+    ],
+    [
+      17,
+      197226
+    ],
+    [
+      18,
+      203607
+    ],
+    [
+      19,
+      182683
+    ],
+    [
+      20,
+      157380
+    ],
+    [
+      21,
+      153387
+    ],
+    [
+      22,
+      139955
+    ],
+    [
+      23,
+      108338
+    ]
+  ],
+  "daily": [
+    {
+      "date": "2008-12-31",
+      "total_trips": 1,
+      "total_revenue": 80.55,
+      "avg_revenue": 80.55
+    },
+    {
+      "date": "2022-10-25",
+      "total_trips": 6,
+      "total_revenue": 332.26,
+      "avg_revenue": 55.38
+    },
+    {
+      "date": "2022-12-31",
+      "total_trips": 25,
+      "total_revenue": 658.23,
+      "avg_revenue": 26.33
+    },
+    {
+      "date": "2023-01-01",
+      "total_trips": 70026,
+      "total_revenue": 2158765.22,
+      "avg_revenue": 30.83
+    },
+    {
+      "date": "2023-01-02",
+      "total_trips": 61892,
+      "total_revenue": 1947828.49,
+      "avg_revenue": 31.47
+    },
+    {
+      "date": "2023-01-03",
+      "total_trips": 80562,
+      "total_revenue": 2373136.81,
+      "avg_revenue": 29.46
+    },
+    {
+      "date": "2023-01-04",
+      "total_trips": 89535,
+      "total_revenue": 2524050.74,
+      "avg_revenue": 28.19
+    },
+    {
+      "date": "2023-01-05",
+      "total_trips": 95196,
+      "total_revenue": 2607222.6,
+      "avg_revenue": 27.39
+    },
+    {
+      "date": "2023-01-06",
+      "total_trips": 96635,
+      "total_revenue": 2585075.48,
+      "avg_revenue": 26.75
+    },
+    {
+      "date": "2023-01-07",
+      "total_trips": 99197,
+      "total_revenue": 2549729.9,
+      "avg_revenue": 25.7
+    },
+    {
+      "date": "2023-01-08",
+      "total_trips": 80179,
+      "total_revenue": 2297405.84,
+      "avg_revenue": 28.65
+    },
+    {
+      "date": "2023-01-09",
+      "total_trips": 80082,
+      "total_revenue": 2257943.83,
+      "avg_revenue": 28.2
+    },
+    {
+      "date": "2023-01-10",
+      "total_trips": 94331,
+      "total_revenue": 2514081.56,
+      "avg_revenue": 26.65
+    },
+    {
+      "date": "2023-01-11",
+      "total_trips": 100181,
+      "total_revenue": 2645249.67,
+      "avg_revenue": 26.4
+    },
+    {
+      "date": "2023-01-12",
+      "total_trips": 104469,
+      "total_revenue": 2897458.87,
+      "avg_revenue": 27.74
+    },
+    {
+      "date": "2023-01-13",
+      "total_trips": 104141,
+      "total_revenue": 2939113.32,
+      "avg_revenue": 28.22
+    },
+    {
+      "date": "2023-01-14",
+      "total_trips": 106577,
+      "total_revenue": 2792084.94,
+      "avg_revenue": 26.2
+    },
+    {
+      "date": "2023-01-15",
+      "total_trips": 91138,
+      "total_revenue": 2485226.23,
+      "avg_revenue": 27.27
+    },
+    {
+      "date": "2023-01-16",
+      "total_trips": 75515,
+      "total_revenue": 2196322.53,
+      "avg_revenue": 29.08
+    },
+    {
+      "date": "2023-01-17",
+      "total_trips": 95098,
+      "total_revenue": 2681731.53,
+      "avg_revenue": 28.2
+    },
+    {
+      "date": "2023-01-18",
+      "total_trips": 100169,
+      "total_revenue": 2732827.65,
+      "avg_revenue": 27.28
+    },
+    {
+      "date": "2023-01-19",
+      "total_trips": 107376,
+      "total_revenue": 2897777.66,
+      "avg_revenue": 26.99
+    },
+    {
+      "date": "2023-01-20",
+      "total_trips": 103201,
+      "total_revenue": 2793413.36,
+      "avg_revenue": 27.07
+    },
+    {
+      "date": "2023-01-21",
+      "total_trips": 105673,
+      "total_revenue": 2642772.73,
+      "avg_revenue": 25.01
+    },
+    {
+      "date": "2023-01-22",
+      "total_trips": 84249,
+      "total_revenue": 2335726.5,
+      "avg_revenue": 27.72
+    },
+    {
+      "date": "2023-01-23",
+      "total_trips": 84262,
+      "total_revenue": 2315395.28,
+      "avg_revenue": 27.48
+    },
+    {
+      "date": "2023-01-24",
+      "total_trips": 97912,
+      "total_revenue": 2601281.31,
+      "avg_revenue": 26.57
+    },
+    {
+      "date": "2023-01-25",
+      "total_trips": 102157,
+      "total_revenue": 2656043.62,
+      "avg_revenue": 26.0
+    },
+    {
+      "date": "2023-01-26",
+      "total_trips": 108071,
+      "total_revenue": 2954495.46,
+      "avg_revenue": 27.34
+    },
+    {
+      "date": "2023-01-27",
+      "total_trips": 105214,
+      "total_revenue": 2836643.41,
+      "avg_revenue": 26.96
+    },
+    {
+      "date": "2023-01-28",
+      "total_trips": 105159,
+      "total_revenue": 2639964.3,
+      "avg_revenue": 25.1
+    },
+    {
+      "date": "2023-01-29",
+      "total_trips": 82854,
+      "total_revenue": 2302361.22,
+      "avg_revenue": 27.79
+    },
+    {
+      "date": "2023-01-30",
+      "total_trips": 78649,
+      "total_revenue": 2203877.1,
+      "avg_revenue": 28.02
+    },
+    {
+      "date": "2023-01-31",
+      "total_trips": 94485,
+      "total_revenue": 2544600.38,
+      "avg_revenue": 26.93
+    },
+    {
+      "date": "2023-02-01",
+      "total_trips": 10,
+      "total_revenue": 313.81,
+      "avg_revenue": 31.38
+    }
+  ]
+}
